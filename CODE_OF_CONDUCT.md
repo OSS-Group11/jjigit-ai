@@ -1,34 +1,54 @@
-# Contributor Covenant Code of Conduct
+# Code of Conduct — jjigit
 
-## Our Pledge
-We as contributors and maintainers pledge to make participation in this project and our community a harassment-free experience for everyone.
+The **jjigit** project aims to provide a collaborative and welcoming environment for everyone contributing to our open-source polling and debate platform.  
+This Code of Conduct outlines the expectations for behavior as we work together, including on AI-related features such as topic generation and summarization.
 
-We are committed to creating an open, welcoming, and inclusive environment. All contributors — regardless of age, gender identity, level of experience, nationality, disability, or background — should feel safe and respected.
+---
 
-## Our Standards
-Examples of behavior that contributes to a positive environment include:
-- Using welcoming and inclusive language
-- Being respectful of different opinions and experiences
-- Accepting constructive feedback graciously
-- Focusing on what is best for the community
+## ✔ Expected Behavior
 
-Examples of unacceptable behavior include:
-- Harassment, insults, or derogatory comments
-- Discriminatory jokes or language
-- Sharing others’ private information without permission
-- Any behavior that would reasonably be considered inappropriate in a professional setting
+All contributors are expected to:
 
-## Enforcement Responsibilities
-Project maintainers are responsible for clarifying and enforcing this Code of Conduct. They have the right and responsibility to remove or reject contributions that violate this policy.
+- Use respectful, inclusive, and considerate language  
+- Welcome questions and support newer contributors  
+- Offer constructive and actionable feedback  
+- Respect different viewpoints, even during disagreements  
+- Keep discussions focused on improving the project  
+- Collaborate with empathy, especially when reviewing AI-related work that may involve subjective outputs  
 
-## Reporting
-If you witness or experience unacceptable behavior, please report it using the project’s issue tracker or contact the maintainers.
+---
 
-- Backend Issues: https://github.com/OSS-Group11/jjigit-be/issues  
-- Frontend Issues: https://github.com/OSS-Group11/jjigit-fe/issues  
-- AI Issues: https://github.com/OSS-Group11/jjigit-ai/issues  
+## ❌ Unacceptable Behavior
 
-All reports will be reviewed and handled promptly and confidentially.
+The following actions are not allowed:
 
-## Attribution
-This Code of Conduct is adapted from the [Contributor Covenant](https://www.contributor-covenant.org), version 2.1.
+- Harassment, discrimination, insults, or derogatory comments  
+- Personal attacks or intentionally hostile interactions  
+- Sharing inappropriate, sexual, or violent content  
+- Dismissing contributions without explanation  
+- Posting spam, low-effort content, or intentionally broken code  
+- Misrepresentation of project work or other contributors  
+- Exploiting the AI module to generate harmful or unethical content  
+
+---
+
+## 🧭 Enforcement
+
+If you observe or experience any unacceptable behavior:
+
+1. Document the behavior if possible (logs, screenshots)  
+2. Report it privately to the project maintainers  
+3. Maintainers will review the situation and determine appropriate actions, which may include:  
+   - A private warning  
+   - Rejection or rollback of contributions  
+   - Temporary or permanent removal from the project  
+
+All reports will be handled professionally, respectfully, and confidentially.
+
+---
+
+## 🤝 Our Commitment
+
+By contributing to **jjigit**, you agree to uphold this Code of Conduct and help maintain a positive, open, and collaborative environment for the entire team and community.
+
+We appreciate your effort in building a reliable and responsible project—especially as we integrate AI components that require thoughtful handling and mutual respect.
