@@ -89,7 +89,7 @@ JJiGiT offers an instant setup, allowing you to create polls in seconds without 
 - Language: Python 3.9+
 - Framework: Flask / FastAPI
 - ML Library: Hugging Face Transformers
-- Models: LLaMA, GPT-based models
+- Models: TinyLLaMA/TinyLlama-1.1B-Chat-v0.1
 - Tasks: Topic Generation, Summarization
 
 </td>
