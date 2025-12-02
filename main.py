@@ -10,11 +10,11 @@ from typing import Optional
 
 # Configuration
 MODEL_NAME = "skt/kogpt2-base-v2"
-BACKEND_URL = "http://localhost:8080/api/polls"
-BACKEND_AUTH_URL = "http://localhost:8080/api/auth"
+BACKEND_URL = "http://3.37.253.134:8080/api/polls"
+BACKEND_AUTH_URL = "http://3.37.253.134:8080/api/auth"
 AI_ADMIN_USERNAME = "AI_Admin"
 AI_ADMIN_PASSWORD = "AIAdmin2025!SecurePass"  # 강력한 비밀번호
-SCHEDULE_INTERVAL_SEC = 30  # 테스트용 30초
+SCHEDULE_INTERVAL_SEC = 3600  # 1시간마다 (3600초)
 
 # Logging Setup
 logging.basicConfig(
