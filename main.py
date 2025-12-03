@@ -1,20 +1,23 @@
 import logging
-import torch
+import os
 import requests
 import uvicorn
 from fastapi import FastAPI
 from pydantic import BaseModel
-from transformers import PreTrainedTokenizerFast, GPT2LMHeadModel
 from apscheduler.schedulers.background import BackgroundScheduler
 from typing import Optional
+from openai import OpenAI
 
 # Configuration
-MODEL_NAME = "skt/kogpt2-base-v2"
+SOLAR_API_KEY = os.getenv("SOLAR_API_KEY", "")  # Upstage Solar API Key (환경변수로 설정 필요)
 BACKEND_URL = "http://3.37.253.134:8080/api/polls"
 BACKEND_AUTH_URL = "http://3.37.253.134:8080/api/auth"
 AI_ADMIN_USERNAME = "AI_Admin"
 AI_ADMIN_PASSWORD = "AIAdmin2025!SecurePass"  # 강력한 비밀번호
 SCHEDULE_INTERVAL_SEC = 3600  # 1시간마다 (3600초)
+
+# Initialize Solar API client (will be set during startup)
+solar_client = None
 
 # Logging Setup
 logging.basicConfig(
@@ -105,58 +108,45 @@ class AuthManager:
 # Initialize auth manager
 auth_manager = AuthManager()
 
-# Load Model & Tokenizer
-try:
-    logger.info(f"Loading model: {MODEL_NAME}")
-    tokenizer = PreTrainedTokenizerFast.from_pretrained(
-        MODEL_NAME, 
-        bos_token='</s>', 
-        es_token='</s>', 
-        pad_token='<pad>'
-    )
-    model = GPT2LMHeadModel.from_pretrained(MODEL_NAME)
-    logger.info("Model loaded successfully.")
-except Exception as e:
-    logger.error(f"Failed to load model: {e}")
-    raise e
-
-def generate_discussion_topic():
-    """Generates a discussion topic using KoGPT2."""
-    # Simplified and clearer prompt
-    prompt = "찬반 투표 주제:"
+def generate_discussion_topic_solar():
+    """Generates a discussion topic using Upstage Solar API."""
+    if not solar_client:
+        logger.error("Solar API client is not initialized")
+        return None
 
     try:
-        input_ids = tokenizer.encode(prompt, return_tensors='pt')
+        response = solar_client.chat.completions.create(
+            model="solar-pro2",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "당신은 흥미로운 찬반 투표 주제를 생성하는 AI입니다. 간결하고 명확하며 논쟁적인 주제를 한 문장으로 제안하세요."
+                },
+                {
+                    "role": "user",
+                    "content": "사람들이 찬성과 반대로 의견을 나눌 수 있는 흥미로운 토론 주제를 한 개만 생성해주세요. 주제만 간결하게 작성하고, 설명이나 부가 내용은 포함하지 마세요."
+                }
+            ],
+            temperature=0.8,
+            max_tokens=100,
+            stream=False
+        )
 
-        with torch.no_grad():
-            gen_ids = model.generate(
-                input_ids,
-                max_length=30,  # Shorter to get concise topics
-                min_length=10,  # Ensure minimum length
-                repetition_penalty=2.5,  # Higher to avoid repetition
-                pad_token_id=tokenizer.pad_token_id,
-                eos_token_id=tokenizer.eos_token_id,
-                bos_token_id=tokenizer.bos_token_id,
-                use_cache=True,
-                do_sample=True,
-                temperature=0.9,  # Higher creativity
-                top_k=50,
-                top_p=0.95
-            )
+        topic = response.choices[0].message.content.strip()
 
-        generated_text = tokenizer.decode(gen_ids[0])
-        # Clean up the output
-        clean_text = generated_text.replace(prompt, "").replace("</s>", "").strip()
+        # 따옴표나 불필요한 문장부호 제거
+        topic = topic.strip('"\'').strip()
 
-        # Remove trailing punctuation if incomplete
-        if clean_text.endswith(('을', '는', '이', '가', '의', '에', '를')):
-            clean_text = clean_text[:-1]
-
-        return clean_text if clean_text else None
+        logger.info(f"Solar API generated topic: {topic}")
+        return topic
 
     except Exception as e:
-        logger.error(f"Error generating topic: {e}")
+        logger.error(f"Error calling Solar API: {e}")
         return None
+
+def generate_discussion_topic():
+    """Generates a discussion topic using Solar API."""
+    return generate_discussion_topic_solar()
 
 def generate_poll_data():
     """Generates a complete poll with topic and options."""
@@ -265,8 +255,31 @@ class PollResponse(BaseModel):
 # Startup event
 @app.on_event("startup")
 async def startup_event():
-    """Initialize authentication on startup."""
+    """Initialize authentication and Solar API client on startup."""
+    global solar_client
+
     logger.info("JJiGiT AI Service starting up...")
+
+    # Initialize Solar API client
+    if SOLAR_API_KEY:
+        try:
+            import httpx
+            # Create httpx client without proxy settings to avoid compatibility issues
+            http_client = httpx.Client(timeout=30.0)
+            solar_client = OpenAI(
+                api_key=SOLAR_API_KEY,
+                base_url="https://api.upstage.ai/v1",
+                http_client=http_client
+            )
+            logger.info("Solar API client initialized successfully")
+        except Exception as e:
+            logger.error(f"Failed to initialize Solar API client: {e}")
+            raise e
+    else:
+        logger.error("SOLAR_API_KEY is not set. Please set the environment variable.")
+        raise ValueError("SOLAR_API_KEY is required")
+
+    # Initialize backend authentication
     if auth_manager.ensure_authenticated():
         logger.info("Authentication successful - AI service ready!")
     else:
@@ -277,7 +290,7 @@ async def startup_event():
 def health_check():
     return {
         "status": "ok",
-        "model": MODEL_NAME,
+        "model": "solar-pro2",
         "authenticated": auth_manager.token is not None,
         "user_id": auth_manager.user_id
     }
